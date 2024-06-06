@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      @media screen and (max-width: 1200px) {
+      }
+      @media screen and (max-width: 768px) {
+      }
+      @media screen and (max-width: 576px) {
+      }
+      :root {
+        --color-brand--1: blue;
+        --color-brand--2: yellow;
+
+        --color-dark--1: #2d3439;
+        --color-dark--2: rgb(248, 248, 250);
+        --color-light--1: black;
+        --color-light--2: #ececec;
+        --color-light--3: rgb(214, 222, 224);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+      }
+
+      html {
+        font-size: 62.5%;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Manrope", sans-serif;
+        color: black;
+        font-weight: 400;
+        line-height: 1.6;
+        height: 100vh;
+        overscroll-behavior-y: none;
+
+        background-color: white;
+        padding: 2.5rem;
+
+        display: flex;
+      }
+
+      /* GENERAL */
+      a:link,
+      a:visited {
+        color: var(--color-brand--1);
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        flex-basis: 50rem;
+        background-color: rgb(69, 69, 69);
+        padding: 3rem 5rem 4rem 5rem;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo {
+        height: 10rem;
+        align-self: center;
+        margin-bottom: 4rem;
+      }
+
+      .workouts {
+        list-style: none;
+        height: 77vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+      }
+
+      .workouts::-webkit-scrollbar {
+        width: 0;
+      }
+
+      .workout {
+        background-color: var(--color-dark--2);
+        border-radius: 5px;
+        padding: 1.5rem 2.25rem;
+        margin-bottom: 1.75rem;
+        cursor: pointer;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.75rem 1.5rem;
+      }
+      .workout--running {
+        border-left: 5px solid var(--color-brand--2);
+      }
+      .workout--cycling {
+        border-left: 5px solid var(--color-brand--1);
+      }
+
+      .workout__title {
+        font-size: 1.7rem;
+        font-weight: 600;
+        grid-column: 1 / -1;
+      }
+
+      .workout__details {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .workout__icon {
+        font-size: 1.8rem;
+        margin-right: 0.2rem;
+        height: 0.28rem;
+      }
+
+      .workout__value {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+      }
+
+      .workout__unit {
+        font-size: 1.1rem;
+        color: var(--color-light--1);
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      .form {
+        background-color: var(--color-dark--2);
+        border-radius: 5px;
+        padding: 1.5rem 2.75rem;
+        margin-bottom: 1.75rem;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem 2.5rem;
+
+        /* Match height and activity boxes */
+        height: 9.25rem;
+        transition: all 0.5s, transform 1ms;
+      }
+
+      .form.hidden {
+        transform: translateY(-30rem);
+        height: 0;
+        padding: 0 2.25rem;
+        margin-bottom: 0;
+        opacity: 0;
+      }
+
+      .form__row {
+        display: flex;
+        align-items: center;
+      }
+
+      .form__row--hidden {
+        display: none;
+      }
+
+      .form__label {
+        flex: 0 0 50%;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .form__input {
+        width: 100%;
+        padding: 0.3rem 1.1rem;
+        font-family: inherit;
+        font-size: 1.4rem;
+        border: none;
+        border-radius: 3px;
+        background-color: var(--color-light--3);
+        transition: all 0.2s;
+      }
+
+      .form__input:focus {
+        outline: none;
+        background-color: #fff;
+      }
+
+      .form__btn {
+        display: none;
+      }
+
+      .copyright {
+        margin-top: auto;
+        font-size: 1.3rem;
+        text-align: center;
+        color: var(--color-light--1);
+      }
+
+      .Linkidin-link:link,
+      .Linkidin-link:visited {
+        color: var(--color-light--1);
+        transition: all 0.2s;
+      }
+
+      .Linkidin-link:hover,
+      .Linkidin-link:active {
+        color: var(--color-light--2);
+      }
+
+      /* MAP */
+      #map {
+        flex: 1;
+        height: 100%;
+        background-color: white;
+      }
+
+      /* Popup width is defined in JS using options */
+      .leaflet-popup .leaflet-popup-content-wrapper {
+        background-color: var(--color-dark--1);
+        color: var(--color-light--2);
+        border-radius: 5px;
+        padding-right: 0.6rem;
+      }
+
+      .leaflet-popup .leaflet-popup-content {
+        font-size: 1.5rem;
+      }
+
+      .leaflet-popup .leaflet-popup-tip {
+        background-color: var(--color-dark--1);
+      }
+
+      .running-popup .leaflet-popup-content-wrapper {
+        border-left: 5px solid var(--color-brand--2);
+      }
+      .cycling-popup .leaflet-popup-content-wrapper {
+        border-left: 5px solid var(--color-brand--1);
+      }
+      .btn {
+        border: none;
+        background-color: rgb(100, 100, 100);
+        color: #222;
+        font-size: 2rem;
+        font-family: sans-serif;
+        padding: 1rem 2rem;
+        cursor: pointer;
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyODYuMjAyNDg2MzAyOTEzMyAyNDcuMiIgaGVpZ2h0PSIyNDcuMiIgd2lkdGg9IjI4Ni4yMDI0ODYzMDI5MTMzIj48Zz48c3ZnIHZpZXdCb3g9IjAgMCAzOTUuNTIgMzQxLjYyMDE3Njg5OTkyNjQiIGhlaWdodD0iMjQ3LjIiIHdpZHRoPSIyODYuMjAyNDg2MzAyOTEzMyI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsMSwwLDIxMS4xMzQ5NzQ0NDU5Mzg2NCkiPjxzdmcgdmlld0JveD0iMCAwIDM5NS41MiAxMzAuNDg1MjAyNDUzOTg3NyIgaGVpZ2h0PSIxMzAuNDg1MjAyNDUzOTg3NyIgd2lkdGg9IjM5NS41MiI+PGcgaWQ9InRleHRibG9ja3RyYW5zZm9ybSI+PHN2ZyB2aWV3Qm94PSIwIDAgMzk1LjUyIDEzMC40ODUyMDI0NTM5ODc3IiBoZWlnaHQ9IjEzMC40ODUyMDI0NTM5ODc3IiB3aWR0aD0iMzk1LjUyIiBpZD0idGV4dGJsb2NrIj48Zz48c3ZnIHZpZXdCb3g9IjAgMCAzOTUuNTIgMTMwLjQ4NTIwMjQ1Mzk4NzciIGhlaWdodD0iMTMwLjQ4NTIwMjQ1Mzk4NzciIHdpZHRoPSIzOTUuNTIiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLDEsMCwwKSI+PHN2ZyB3aWR0aD0iMzk1LjUyIiB2aWV3Qm94PSIyLjI3IC0zOS41IDE1OS43OCA1Mi41MTAwMDAwMDAwMDAwMDUiIGhlaWdodD0iMTMwLjQ4NTIwMjQ1Mzk4NzciIGRhdGEtcGFsZXR0ZS1jb2xvcj0iI2ZmZmZmZiI+PGcgY2xhc3M9IndvcmRtYXJrLXRleHQtMCIgZGF0YS1maWxsLXBhbGV0dGUtY29sb3I9InByaW1hcnkiIGlkPSJ0ZXh0LTAiPjxwYXRoIGQ9Ik0xOS4wMiAwTDEwLjk5LTI2LjIyIDguMjUgMCAyLjI3IDAgOC4yNS0zNS4xNiAxNy4xMS0zNS4xNiAyNS4zNC04LjMzIDMzLjY3LTM1LjE2IDQyLjUzLTM1LjE2IDQ3LjUxIDAgMzcuNjUgMCAzNC43NC0yNS41NCAyNy44OCAwIDE5LjAyIDBaTTgxLjc2LTI4LjJMODEuNzYgMCA3My41MSAwIDczLjUxLTMuMzdRNzIuMDQtMS4zNyA2OS45OC0wLjQgNjcuOTIgMC41NiA2NS40NSAwLjU2TDY1LjQ1IDAuNTZRNjIuMjMgMC41NiA1OS42OS0wLjU5IDU3LjE1LTEuNzMgNTUuMzktMy43MiA1My42NC01LjcxIDUyLjcxLTguNCA1MS43OC0xMS4wOCA1MS43OC0xNC4xNkw1MS43OC0xNC4xNlE1MS43OC0xNy4yNCA1Mi43MS0xOS45MiA1My42NC0yMi42MSA1NS4zOS0yNC42IDU3LjE1LTI2LjU5IDU5LjY5LTI3LjczIDYyLjIzLTI4Ljg4IDY1LjQ1LTI4Ljg4TDY1LjQ1LTI4Ljg4UTY3LjA5LTI4Ljg4IDY4LjU2LTI4LjM5IDcwLjA0LTI3LjkxIDcxLjI3LTI3LjAxIDcyLjUxLTI2LjEyIDczLjQ1LTI0Ljg3IDc0LjM5LTIzLjYxIDc0LjkyLTIyLjA3TDc0LjkyLTIyLjA3IDc4LjU5LTI4LjIgODEuNzYtMjguMlpNNzMuNDYtMTQuMTZMNzMuNDYtMTQuMTZRNzMuNDYtMTUuMjYgNzMuMzUtMTYuNDggNzMuMjQtMTcuNyA3Mi45Ny0xOC45IDcyLjctMjAuMDkgNzIuMjMtMjEuMTggNzEuNzUtMjIuMjcgNzEuMDEtMjMuMTEgNzAuMjYtMjMuOTUgNjkuMjEtMjQuNDQgNjguMTYtMjQuOTMgNjYuNzctMjQuOTNMNjYuNzctMjQuOTNRNjUuMzgtMjQuOTMgNjQuMzUtMjQuNDMgNjMuMzMtMjMuOTMgNjIuNi0yMy4wOCA2MS44Ni0yMi4yNCA2MS4zOS0yMS4xNCA2MC45MS0yMC4wNCA2MC42NC0xOC44NSA2MC4zNy0xNy42NSA2MC4yNi0xNi40NCA2MC4xNS0xNS4yMyA2MC4xNS0xNC4xNkw2MC4xNS0xNC4xNlE2MC4xNS0xMy4wOSA2MC4yNi0xMS44NyA2MC4zNy0xMC42NCA2MC42NC05LjQ1IDYwLjkxLTguMjUgNjEuMzktNy4xNSA2MS44Ni02LjA1IDYyLjYtNS4yMSA2My4zMy00LjM3IDY0LjM1LTMuODcgNjUuMzgtMy4zNyA2Ni43Ny0zLjM3TDY2Ljc3LTMuMzdRNjguMDQtMy4zNyA2OS4wMy0zLjg5IDcwLjAyLTQuNDIgNzAuNzYtNS4zIDcxLjUxLTYuMTggNzIuMDItNy4zIDcyLjUzLTguNDIgNzIuODUtOS42MiA3My4xNy0xMC44MiA3My4zMS0xMiA3My40Ni0xMy4xOCA3My40Ni0xNC4xNlpNMTE4LjYyLTE0LjE2TDExOC42Mi0xNC4xNlExMTguNjItMTEuMDggMTE3LjctOC40IDExNi43Ny01LjcxIDExNS4wMS0zLjcyIDExMy4yNS0xLjczIDExMC43MS0wLjU5IDEwOC4xNyAwLjU2IDEwNC45NSAwLjU2TDEwNC45NSAwLjU2UTEwMi40OSAwLjU2IDEwMC40Mi0wLjQgOTguMzYtMS4zNyA5Ni44OS0zLjM3TDk2Ljg5LTMuMzcgOTYuODkgMTMuMDEgODguNjQgMTMuMDEgODguNjQtMjguMiA5MS44Mi0yOC4yIDk1LjQ4LTIyLjA3UTk2LjAyLTIzLjYxIDk2Ljk2LTI0Ljg3IDk3LjktMjYuMTIgOTkuMTMtMjcuMDEgMTAwLjM2LTI3LjkxIDEwMS44NC0yOC4zOSAxMDMuMzItMjguODggMTA0Ljk1LTI4Ljg4TDEwNC45NS0yOC44OFExMDguMTctMjguODggMTEwLjcxLTI3LjczIDExMy4yNS0yNi41OSAxMTUuMDEtMjQuNiAxMTYuNzctMjIuNjEgMTE3LjctMTkuOTIgMTE4LjYyLTE3LjI0IDExOC42Mi0xNC4xNlpNMTEwLjI1LTE0LjE2TDExMC4yNS0xNC4xNlExMTAuMjUtMTUuMjMgMTEwLjE0LTE2LjQ0IDExMC4wMy0xNy42NSAxMDkuNzYtMTguODUgMTA5LjQ5LTIwLjA0IDEwOS4wMi0yMS4xNCAxMDguNTQtMjIuMjQgMTA3LjgxLTIzLjA4IDEwNy4wOC0yMy45MyAxMDYuMDQtMjQuNDMgMTA1LTI0LjkzIDEwMy42My0yNC45M0wxMDMuNjMtMjQuOTNRMTAyLjIyLTI0LjkzIDEwMS4xOC0yNC40NCAxMDAuMTQtMjMuOTUgOTkuNC0yMy4xMSA5OC42NS0yMi4yNyA5OC4xOC0yMS4xOCA5Ny43LTIwLjA5IDk3LjQzLTE4LjkgOTcuMTYtMTcuNyA5Ny4wNS0xNi40OCA5Ni45NC0xNS4yNiA5Ni45NC0xNC4xNkw5Ni45NC0xNC4xNlE5Ni45NC0xMy4xOCA5Ny4wOS0xMiA5Ny4yNC0xMC44MiA5Ny41NS05LjYyIDk3Ljg3LTguNDIgOTguMzgtNy4zIDk4LjktNi4xOCA5OS42NC01LjMgMTAwLjM5LTQuNDIgMTAxLjM3LTMuODkgMTAyLjM2LTMuMzcgMTAzLjYzLTMuMzdMMTAzLjYzLTMuMzdRMTA1LjAyLTMuMzcgMTA2LjA1LTMuODcgMTA3LjA4LTQuMzcgMTA3LjgxLTUuMjEgMTA4LjU0LTYuMDUgMTA5LjAyLTcuMTUgMTA5LjQ5LTguMjUgMTA5Ljc2LTkuNDUgMTEwLjAzLTEwLjY0IDExMC4xNC0xMS44NyAxMTAuMjUtMTMuMDkgMTEwLjI1LTE0LjE2Wk0xNDguMTktOS4wMUwxNDguMTktOS4wMVExNDguMTktNy4xNSAxNDcuNjUtNS43MSAxNDcuMTEtNC4yNyAxNDYuMTgtMy4yMSAxNDUuMjYtMi4xNSAxNDMuOTktMS40MyAxNDIuNzItMC43MSAxNDEuMjYtMC4yNyAxMzkuODEgMC4xNyAxMzguMjIgMC4zNyAxMzYuNjQgMC41NiAxMzUuMDggMC41NkwxMzUuMDggMC41NlExMzIuOTggMC41NiAxMzEuMzYgMC4yOSAxMjkuNzUgMC4wMiAxMjguMjktMC41NyAxMjYuODItMS4xNyAxMjUuMzctMi4xMiAxMjMuOTItMy4wOCAxMjIuMTQtNC40NEwxMjIuMTQtNC40NCAxMjYuOTUtOC4zN1ExMjcuNi03LjEzIDEyOC42OS02LjEyIDEyOS43OC01LjEgMTMwLjk1LTQuMzcgMTMyLjEyLTMuNjQgMTMzLjIyLTMuMjUgMTM0LjMyLTIuODYgMTM1LTIuODZMMTM1LTIuODZRMTM1LjU2LTIuODYgMTM2LjI3LTIuODkgMTM2Ljk4LTIuOTMgMTM3LjcxLTMuMDQgMTM4LjQ0LTMuMTUgMTM5LjE1LTMuMzcgMTM5Ljg2LTMuNTkgMTQwLjQxLTMuOTcgMTQwLjk2LTQuMzUgMTQxLjI5LTQuOTIgMTQxLjYyLTUuNDkgMTQxLjYyLTYuM0wxNDEuNjItNi4zUTE0MS42Mi03LjEzIDE0MS4xOS03Ljc1IDE0MC43Ni04LjM3IDE0MC4wOC04Ljg0IDEzOS40LTkuMyAxMzguNTItOS42MiAxMzcuNjQtOS45NCAxMzYuNzUtMTAuMTggMTM1Ljg2LTEwLjQyIDEzNS4wMy0xMC42MSAxMzQuMi0xMC43OSAxMzMuNTktMTAuOTZMMTMzLjU5LTEwLjk2UTEzMi40Ni0xMS4yOCAxMzEuMjItMTEuNjEgMTI5Ljk3LTExLjk0IDEyOC43NS0xMi4zNyAxMjcuNTMtMTIuNzkgMTI2LjQyLTEzLjM4IDEyNS4zMS0xMy45NiAxMjQuNDctMTQuNzggMTIzLjYzLTE1LjYgMTIzLjEyLTE2LjcxIDEyMi42Mi0xNy44MiAxMjIuNjItMTkuMzFMMTIyLjYyLTE5LjMxUTEyMi42Mi0yMi4wNSAxMjMuNzEtMjMuODkgMTI0LjgtMjUuNzMgMTI2LjU4LTI2Ljg0IDEyOC4zNi0yNy45NSAxMzAuNjMtMjguNDIgMTMyLjktMjguODggMTM1LjI1LTI4Ljg4TDEzNS4yNS0yOC44OFExMzYuODYtMjguODggMTM4LjY0LTI4LjU1IDE0MC40Mi0yOC4yMiAxNDIuMTEtMjcuNTggMTQzLjc5LTI2LjkzIDE0NS4yNi0yNiAxNDYuNzItMjUuMDcgMTQ3LjctMjMuODhMMTQ3LjctMjMuODggMTQyLjg5LTE5LjkyUTE0Mi4zNS0yMS4zOSAxNDEuNDgtMjIuNDQgMTQwLjYyLTIzLjQ5IDEzOS42LTI0LjE2IDEzOC41OS0yNC44MyAxMzcuNTMtMjUuMTUgMTM2LjQ3LTI1LjQ2IDEzNS41Ni0yNS40NkwxMzUuNTYtMjUuNDZRMTM0LjY4LTI1LjQ2IDEzMy41OS0yNS4zOSAxMzIuNDktMjUuMzIgMTMxLjUyLTI0Ljk4IDEzMC41Ni0yNC42MyAxMjkuODktMjMuOTQgMTI5LjIyLTIzLjI0IDEyOS4yMi0yMi4wMkwxMjkuMjItMjIuMDJRMTI5LjIyLTIxLjE0IDEyOS42Mi0yMC41MiAxMzAuMDItMTkuOSAxMzAuNjgtMTkuNDUgMTMxLjM0LTE4Ljk5IDEzMi4xOC0xOC42OSAxMzMuMDItMTguMzggMTMzLjktMTguMTUgMTM0Ljc4LTE3LjkyIDEzNS42MS0xNy43NSAxMzYuNDQtMTcuNTggMTM3LjEtMTcuMzhMMTM3LjEtMTcuMzhRMTM4LjIyLTE3LjA3IDEzOS40OC0xNi43NCAxNDAuNzQtMTYuNDEgMTQxLjk2LTE1Ljk4IDE0My4xOC0xNS41NSAxNDQuMzItMTQuOTggMTQ1LjQ1LTE0LjQgMTQ2LjMxLTEzLjU3IDE0Ny4xNi0xMi43NCAxNDcuNjctMTEuNjMgMTQ4LjE5LTEwLjUyIDE0OC4xOS05LjAxWk0xNjIuMDUtMzUuMDFMMTYyLjA1LTM1LjAxUTE2Mi4wNS0zNC4wOCAxNjEuNy0zMy4yNSAxNjEuMzQtMzIuNDIgMTYwLjczLTMxLjgxIDE2MC4xMi0zMS4yIDE1OS4yOS0zMC44NSAxNTguNDYtMzAuNDkgMTU3LjUzLTMwLjQ5TDE1Ny41My0zMC40OVExNTYuNjEtMzAuNDkgMTU1Ljc5LTMwLjg1IDE1NC45Ny0zMS4yIDE1NC4zNi0zMS44MSAxNTMuNzUtMzIuNDIgMTUzLjQtMzMuMjUgMTUzLjA0LTM0LjA4IDE1My4wNC0zNS4wMUwxNTMuMDQtMzUuMDFRMTUzLjA0LTM1Ljk0IDE1My40LTM2Ljc2IDE1My43NS0zNy41NyAxNTQuMzYtMzguMTggMTU0Ljk3LTM4Ljc5IDE1NS43OS0zOS4xNSAxNTYuNjEtMzkuNSAxNTcuNTMtMzkuNUwxNTcuNTMtMzkuNVExNTguNDYtMzkuNSAxNTkuMjktMzkuMTUgMTYwLjEyLTM4Ljc5IDE2MC43My0zOC4xOCAxNjEuMzQtMzcuNTcgMTYxLjctMzYuNzYgMTYyLjA1LTM1Ljk0IDE2Mi4wNS0zNS4wMVpNMTYxLjY4LTI4LjE3TDE2MS42OCAwIDE1My40MSAwIDE1My40MS0yOC4xNyAxNjEuNjgtMjguMTdaIiBmaWxsPSIjZmZmZmZmIiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0icHJpbWFyeSIvPjwvZz48L3N2Zz48L2c+PC9zdmc+PC9nPjwvc3ZnPjwvZz48L3N2Zz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsMSwxMDcuNzM3NzE1MDQ5MzM5NjMsMCkiPjxzdmcgdmlld0JveD0iMCAwIDE4MC4wNDQ1Njk5MDEzMjA3MyAxODAuMzMwNTQ5NzkxNDExMDQiIGhlaWdodD0iMTgwLjMzMDU0OTc5MTQxMTA0IiB3aWR0aD0iMTgwLjA0NDU2OTkwMTMyMDczIj48Zz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgdmlld0JveD0iMC4xNzY0NjkzMTE1NjgxOTcxNyAwIDk5LjY0NjcyMjc1MzIyNDcgOTkuODA1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIiBoZWlnaHQ9IjE4MC4zMzA1NDk3OTE0MTEwNCIgd2lkdGg9IjE4MC4wNDQ1Njk5MDEzMjA3MyIgY2xhc3M9Imljb24taWNvbi0wIiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50IiBpZD0iaWNvbi0wIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNOTkuNjg5IDk3LjA4OUw4Ni4zIDYyLjQxMmMtMC4xOTgtMC41MTQtMC42MDEtMC45MjMtMS4xMS0xLjEzbC0xOS45MjYtOC4xMTNjLTAuNDUzLTAuMTg1LTAuOTU3LTAuMTk2LTEuNDE4LTAuMDM1bC0wLjcyOSAwLjI1N2M1LjkxNy05LjIxNiAxMi42NjMtMjEuNjY1IDEyLjY2My0zMC41NDhDNzUuNzc5IDEwLjI0NyA2NS41MTQgMCA1Mi44OTEgMGMtMTIuNjIyIDAtMjIuODkgMTAuMjQ3LTIyLjg5IDIyLjg0MiAwIDEwLjg4NCAxMC4yMDUgMjcuMTEzIDE2LjU4IDM2LjE5MmwtMTkuMzcyLTYuNTQ1Yy0wLjcyOS0wLjI0Ni0xLjU0MS0wLjA1Mi0yLjA3OCAwLjUwMkwwLjc0IDc4LjEyNWMtMC40MjkgMC40NDEtMC42MyAxLjA1Ny0wLjU0NCAxLjY2NCAwLjA4NSAwLjYwOSAwLjQ0NiAxLjE0NiAwLjk3OSAxLjQ1MmwzMS42OTMgMTguMjc2YzAuMDAxIDAgMC4wMDIgMCAwLjAwMyAwbDAuMDI4IDAuMDE4YzAuMDIxIDAuMDEyIDAuMDQ0IDAuMDE3IDAuMDY1IDAuMDI1IDAuMDg4IDAuMDQ3IDAuMTc1IDAuMDk0IDAuMjcxIDAuMTI5IDAuMDI1IDAuMDA5IDAuMDUyIDAuMDEyIDAuMDc3IDAuMDIgMC4wMzUgMC4wMTIgMC4wNyAwLjAyIDAuMTA2IDAuMDI3IDAuMTIxIDAuMDMxIDAuMjQyIDAuMDUgMC4zNjMgMC4wNTggMC4wMjQgMC4wMDEgMC4wNDkgMC4wMDYgMC4wNzMgMC4wMDYgMC4wMTUgMCAwLjAyOSAwLjAwNSAwLjA0NCAwLjAwNSAwLjA0IDAgMC4wNzgtMC4wMTcgMC4xMTgtMC4wMiAwLjEzNi0wLjAwOCAwLjI3LTAuMDI2IDAuNDAzLTAuMDYyIDAuMDY1LTAuMDE4IDAuMTI2LTAuMDQxIDAuMTg5LTAuMDY0IDAuMDU4LTAuMDIyIDAuMTE5LTAuMDMzIDAuMTc2LTAuMDYybDI3Ljc2Ny0xMy43MDFjMC4xODYgMC4wNjUgMC4zODEgMC4xMTMgMC41ODggMC4xMjEgMC4wMjYgMC4wMDIgMC4wNTMgMC4wMDIgMC4wNzcgMC4wMDIgMC4xNTYgMCAwLjMwOC0wLjAyMiAwLjQ1My0wLjA1OGwzMy4zOTIgMTMuNjkyYzAuMjQ0IDAuMTAyIDAuNTA0IDAuMTQ5IDAuNzYgMC4xNDkgMC41MTMgMCAxLjAxOC0wLjE5NiAxLjM5Ny0wLjU2OUM5OS43OTMgOTguNjc2IDk5Ljk3NyA5Ny44MzMgOTkuNjg5IDk3LjA4OXpNNDguMDk4IDQzLjE0YzAtMi43MTkgMi4yNS01LjAxNiA0LjkxOS01LjAxNiAyLjcyNiAwIDUuMDI2IDIuMjk3IDUuMDI2IDUuMDE2IDAgMi42NjQtMi4zMDIgNC45MTQtNS4wMjYgNC45MTRDNTAuMzQ4IDQ4LjA1NCA0OC4wOTggNDUuODA0IDQ4LjA5OCA0My4xNHpNNDMuMzgxIDE2LjM4N2MtMC40MTgtMC4zNjctMC4zNjYtMC45OTIgMC0xLjM1OCAwIDAgMy44NzctNC42IDEwLjYzMy00LjYgNS41NDcgMCAxMC42ODIgMy44NjggMTAuNjgyIDkuMTQ1IDAgNi44OTUtNy44NTQgNy4xMDQtNy44NTQgMTIuNzQ4IDAgMC41NzYtMC40NzMgMC45OTQtMC45OTcgMC45OTRoLTUuNjAyYy0wLjUyNSAwLTAuOTkzLTAuNDE3LTAuOTkzLTAuOTk0VjMwLjEzYzAtNC4zOTMgNy4yMjgtNi4zMjQgNy4yMjgtOS42NjcgMC0xLjYyMi0xLjY3OC0zLjA4NC0zLjkyOS0zLjA4NC0zLjY2NiAwLTQuNjYgMy4yOTQtNS45NyAyLjE0NEw0My4zODEgMTYuMzg3ek0zMi40NTMgODEuMjNjMS4zMDUgMC40ODIgMi42NjkgMC44MzggNC4wNTUgMS4wNTEgMC4wNTIgMC4wMDggMC4xMDMgMC4wMTIgMC4xNTMgMC4wMTIgMC4yNzIgMCAwLjUxOS0wLjExOCAwLjcwMi0wLjMwNGwtNC41NDggMTIuODg3TDUuMzk2IDc5LjA2NGwxMi4zNjEtMTIuNzM4YzAuMjg5IDAuNjQ2IDAuNjk0IDEuNDk0IDEuMjQgMi40OCAwLjE4MyAwLjMzIDAuNTIzIDAuNTE2IDAuODc2IDAuNTE2IDAuMTYzIDAgMC4zMjktMC4wNCAwLjQ4Mi0wLjEyNCAwLjQ4My0wLjI2NyAwLjY1OS0wLjg3NCAwLjM5Mi0xLjM1Ni0wLjc3MS0xLjM5NS0xLjI1My0yLjUwOS0xLjQ4LTMuMDdsNy44NTYtOC4wOTcgMTcuMTMgNS43ODgtNi42MTYgMTguNzQ4Yy0wLjAzOS0wLjQ0Ny0wLjM2LTAuODMxLTAuODI1LTAuOTAyLTEuMjUyLTAuMTkxLTIuNDg0LTAuNTEzLTMuNjY0LTAuOTQ5LTAuNTE1LTAuMTktMS4wOTMgMC4wNzItMS4yODUgMC41OUMzMS42NzEgODAuNDY1IDMxLjkzNSA4MS4wMzkgMzIuNDUzIDgxLjIzek02MS44MDMgNjguNjQxYy0wLjM3OCAwLjMyMS0wLjQ3OCAwLjg3My0wLjE5NSAxLjI5NyAwLjA0MSAwLjA2MiAwLjA5IDAuMTEzIDAuMTQxIDAuMTYybC0wLjQ1NiAxMS45NjUtMjMuODcgMTEuNzc5IDEwLjk2MS0zMS4wNTggMC43MTYtMC4yNTFjMS4zNjYgMS44NTIgMi4yODggMy4wMjUgMi40NTggMy4yNDIgMC4zNDQgMC40MzUgMC44NjkgMC42ODggMS40MjQgMC42ODhoMC4wMDRjMC41NTgtMC4wMDIgMS4wODItMC4yNTcgMS40MjUtMC42OTMgMC4yNjItMC4zMzQgMi4yOTktMi45NTEgNS4wMTMtNi44NTZsMi43OTEtMC45NzlMNjEuODAzIDY4LjY0MXpNNjUuMjg2IDgyLjMwN2wwLjUwOS0xMy4zNDFjMC4xNjItMC4wMzYgMC4zMjQtMC4wNzUgMC40ODgtMC4xMDYgMC41NDMtMC4xMDIgMC44OTgtMC42MjMgMC43OTctMS4xNjQtMC4xMDQtMC41NDMtMC42MjQtMC44OTUtMS4xNjgtMC43OTctMC4wMTQgMC4wMDItMC4wMjUgMC4wMDYtMC4wMzkgMC4wMWwwLjM0NS05LjA0IDE2LjY2IDYuNzg0TDk0LjI4NyA5NC4yIDY1LjI4NiA4Mi4zMDd6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTI0LjY0NCA3My4zN2MtMC4zNjgtMC40MS0xLTAuNDQ2LTEuNDEyLTAuMDgtMC40MTIgMC4zNjctMC40NDggMC45OTctMC4wOCAxLjQxIDAuOTQ1IDEuMDU2IDEuOTUyIDIuMDIyIDIuOTkyIDIuODc0IDAuMTg3IDAuMTUgMC40MSAwLjIyNiAwLjYzMyAwLjIyNiAwLjI5IDAgMC41NzctMC4xMjQgMC43NzQtMC4zNjQgMC4zNTEtMC40MjggMC4yODctMS4wNTctMC4xNC0xLjQwNEMyNi40NTEgNzUuMjQ0IDI1LjUyIDc0LjM1MiAyNC42NDQgNzMuMzd6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTQ2LjgzMSA3OC4wMzJjLTEuMjA5IDAuNTMyLTIuNDM0IDAuOTk3LTMuNjM4IDEuMzg1LTAuNTI1IDAuMTctMC44MTQgMC43MzEtMC42NDYgMS4yNTcgMC4xMzcgMC40MjQgMC41MjkgMC42OTEgMC45NTIgMC42OTEgMC4xMDIgMCAwLjIwNS0wLjAxNiAwLjMwNy0wLjA0OSAxLjI3LTAuNDA3IDIuNTU5LTAuODk4IDMuODMxLTEuNDU5IDAuNTA1LTAuMjIyIDAuNzM0LTAuODExIDAuNTEyLTEuMzE0QzQ3LjkyNyA3OC4wNCA0Ny4zMzggNzcuODA5IDQ2LjgzMSA3OC4wMzJ6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTc3LjI0MiA2OC4zMTFjLTEuMzE2LTAuNTY5LTIuNjU2LTEuMDA2LTMuOTgyLTEuMjkzLTAuNTM1LTAuMTE3LTEuMDcgMC4yMjUtMS4xODkgMC43NjQtMC4xMTYgMC41MzcgMC4yMjcgMS4wNyAwLjc2NyAxLjE4OCAxLjE5OCAwLjI2IDIuNDEyIDAuNjU0IDMuNjA4IDEuMTc0IDAuMTMxIDAuMDU3IDAuMjY2IDAuMDgyIDAuMzk3IDAuMDgyIDAuMzg4IDAgMC43NTUtMC4yMjUgMC45MTgtMC42MDFDNzcuOTggNjkuMTE3IDc3Ljc0OCA2OC41MjkgNzcuMjQyIDY4LjMxMXoiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNNTYuMTY0IDcyLjYyN2MtMS4xODQgMC44MjYtMi4yNTggMS41MzktMy4yODggMi4xOC0wLjQ2OSAwLjI5MS0wLjYxIDAuOTA3LTAuMzE5IDEuMzc1IDAuMTg5IDAuMzAzIDAuNTE3IDAuNDcxIDAuODUxIDAuNDcxIDAuMTgxIDAgMC4zNjItMC4wNDkgMC41MjgtMC4xNTEgMS4wNi0wLjY2IDIuMTY0LTEuMzk0IDMuMzc1LTIuMjM3IDAuNDUzLTAuMzE1IDAuNTYyLTAuOTM4IDAuMjQ2LTEuMzkxQzU3LjI0IDcyLjQyIDU2LjYxNyA3Mi4zMTEgNTYuMTY0IDcyLjYyN3oiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNODIuMDIgNzIuMjI3Yy0wLjM0IDAuNDM1LTAuMjY1IDEuMDYxIDAuMTcyIDEuNCAwLjk3NyAwLjc2NCAxLjk2MSAxLjYyMiAyLjkyOCAyLjU1OSAwLjE5MyAwLjE4NyAwLjQ0MyAwLjI3OSAwLjY5NSAwLjI3OSAwLjI2MSAwIDAuNTIxLTAuMTAyIDAuNzE5LTAuMzA0IDAuMzg0LTAuMzk2IDAuMzc0LTEuMDI3LTAuMDIzLTEuNDExLTEuMDE2LTAuOTgtMi4wNTQtMS44ODktMy4wODYtMi42OTNDODIuOTg4IDcxLjcxNiA4Mi4zNTkgNzEuNzkyIDgyLjAyIDcyLjIyN3oiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48L3N2Zz48L2c+PC9zdmc+PC9nPjxnLz48L3N2Zz48L2c+PGRlZnMvPjwvc3ZnPg=="
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      defer
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <title>Mapsi</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <img
+        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyODYuMjAyNDg2MzAyOTEzMyAyNDcuMiIgaGVpZ2h0PSIyNDcuMiIgd2lkdGg9IjI4Ni4yMDI0ODYzMDI5MTMzIj48Zz48c3ZnIHZpZXdCb3g9IjAgMCAzOTUuNTIgMzQxLjYyMDE3Njg5OTkyNjQiIGhlaWdodD0iMjQ3LjIiIHdpZHRoPSIyODYuMjAyNDg2MzAyOTEzMyI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsMSwwLDIxMS4xMzQ5NzQ0NDU5Mzg2NCkiPjxzdmcgdmlld0JveD0iMCAwIDM5NS41MiAxMzAuNDg1MjAyNDUzOTg3NyIgaGVpZ2h0PSIxMzAuNDg1MjAyNDUzOTg3NyIgd2lkdGg9IjM5NS41MiI+PGcgaWQ9InRleHRibG9ja3RyYW5zZm9ybSI+PHN2ZyB2aWV3Qm94PSIwIDAgMzk1LjUyIDEzMC40ODUyMDI0NTM5ODc3IiBoZWlnaHQ9IjEzMC40ODUyMDI0NTM5ODc3IiB3aWR0aD0iMzk1LjUyIiBpZD0idGV4dGJsb2NrIj48Zz48c3ZnIHZpZXdCb3g9IjAgMCAzOTUuNTIgMTMwLjQ4NTIwMjQ1Mzk4NzciIGhlaWdodD0iMTMwLjQ4NTIwMjQ1Mzk4NzciIHdpZHRoPSIzOTUuNTIiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLDEsMCwwKSI+PHN2ZyB3aWR0aD0iMzk1LjUyIiB2aWV3Qm94PSIyLjI3IC0zOS41IDE1OS43OCA1Mi41MTAwMDAwMDAwMDAwMDUiIGhlaWdodD0iMTMwLjQ4NTIwMjQ1Mzk4NzciIGRhdGEtcGFsZXR0ZS1jb2xvcj0iI2ZmZmZmZiI+PGcgY2xhc3M9IndvcmRtYXJrLXRleHQtMCIgZGF0YS1maWxsLXBhbGV0dGUtY29sb3I9InByaW1hcnkiIGlkPSJ0ZXh0LTAiPjxwYXRoIGQ9Ik0xOS4wMiAwTDEwLjk5LTI2LjIyIDguMjUgMCAyLjI3IDAgOC4yNS0zNS4xNiAxNy4xMS0zNS4xNiAyNS4zNC04LjMzIDMzLjY3LTM1LjE2IDQyLjUzLTM1LjE2IDQ3LjUxIDAgMzcuNjUgMCAzNC43NC0yNS41NCAyNy44OCAwIDE5LjAyIDBaTTgxLjc2LTI4LjJMODEuNzYgMCA3My41MSAwIDczLjUxLTMuMzdRNzIuMDQtMS4zNyA2OS45OC0wLjQgNjcuOTIgMC41NiA2NS40NSAwLjU2TDY1LjQ1IDAuNTZRNjIuMjMgMC41NiA1OS42OS0wLjU5IDU3LjE1LTEuNzMgNTUuMzktMy43MiA1My42NC01LjcxIDUyLjcxLTguNCA1MS43OC0xMS4wOCA1MS43OC0xNC4xNkw1MS43OC0xNC4xNlE1MS43OC0xNy4yNCA1Mi43MS0xOS45MiA1My42NC0yMi42MSA1NS4zOS0yNC42IDU3LjE1LTI2LjU5IDU5LjY5LTI3LjczIDYyLjIzLTI4Ljg4IDY1LjQ1LTI4Ljg4TDY1LjQ1LTI4Ljg4UTY3LjA5LTI4Ljg4IDY4LjU2LTI4LjM5IDcwLjA0LTI3LjkxIDcxLjI3LTI3LjAxIDcyLjUxLTI2LjEyIDczLjQ1LTI0Ljg3IDc0LjM5LTIzLjYxIDc0LjkyLTIyLjA3TDc0LjkyLTIyLjA3IDc4LjU5LTI4LjIgODEuNzYtMjguMlpNNzMuNDYtMTQuMTZMNzMuNDYtMTQuMTZRNzMuNDYtMTUuMjYgNzMuMzUtMTYuNDggNzMuMjQtMTcuNyA3Mi45Ny0xOC45IDcyLjctMjAuMDkgNzIuMjMtMjEuMTggNzEuNzUtMjIuMjcgNzEuMDEtMjMuMTEgNzAuMjYtMjMuOTUgNjkuMjEtMjQuNDQgNjguMTYtMjQuOTMgNjYuNzctMjQuOTNMNjYuNzctMjQuOTNRNjUuMzgtMjQuOTMgNjQuMzUtMjQuNDMgNjMuMzMtMjMuOTMgNjIuNi0yMy4wOCA2MS44Ni0yMi4yNCA2MS4zOS0yMS4xNCA2MC45MS0yMC4wNCA2MC42NC0xOC44NSA2MC4zNy0xNy42NSA2MC4yNi0xNi40NCA2MC4xNS0xNS4yMyA2MC4xNS0xNC4xNkw2MC4xNS0xNC4xNlE2MC4xNS0xMy4wOSA2MC4yNi0xMS44NyA2MC4zNy0xMC42NCA2MC42NC05LjQ1IDYwLjkxLTguMjUgNjEuMzktNy4xNSA2MS44Ni02LjA1IDYyLjYtNS4yMSA2My4zMy00LjM3IDY0LjM1LTMuODcgNjUuMzgtMy4zNyA2Ni43Ny0zLjM3TDY2Ljc3LTMuMzdRNjguMDQtMy4zNyA2OS4wMy0zLjg5IDcwLjAyLTQuNDIgNzAuNzYtNS4zIDcxLjUxLTYuMTggNzIuMDItNy4zIDcyLjUzLTguNDIgNzIuODUtOS42MiA3My4xNy0xMC44MiA3My4zMS0xMiA3My40Ni0xMy4xOCA3My40Ni0xNC4xNlpNMTE4LjYyLTE0LjE2TDExOC42Mi0xNC4xNlExMTguNjItMTEuMDggMTE3LjctOC40IDExNi43Ny01LjcxIDExNS4wMS0zLjcyIDExMy4yNS0xLjczIDExMC43MS0wLjU5IDEwOC4xNyAwLjU2IDEwNC45NSAwLjU2TDEwNC45NSAwLjU2UTEwMi40OSAwLjU2IDEwMC40Mi0wLjQgOTguMzYtMS4zNyA5Ni44OS0zLjM3TDk2Ljg5LTMuMzcgOTYuODkgMTMuMDEgODguNjQgMTMuMDEgODguNjQtMjguMiA5MS44Mi0yOC4yIDk1LjQ4LTIyLjA3UTk2LjAyLTIzLjYxIDk2Ljk2LTI0Ljg3IDk3LjktMjYuMTIgOTkuMTMtMjcuMDEgMTAwLjM2LTI3LjkxIDEwMS44NC0yOC4zOSAxMDMuMzItMjguODggMTA0Ljk1LTI4Ljg4TDEwNC45NS0yOC44OFExMDguMTctMjguODggMTEwLjcxLTI3LjczIDExMy4yNS0yNi41OSAxMTUuMDEtMjQuNiAxMTYuNzctMjIuNjEgMTE3LjctMTkuOTIgMTE4LjYyLTE3LjI0IDExOC42Mi0xNC4xNlpNMTEwLjI1LTE0LjE2TDExMC4yNS0xNC4xNlExMTAuMjUtMTUuMjMgMTEwLjE0LTE2LjQ0IDExMC4wMy0xNy42NSAxMDkuNzYtMTguODUgMTA5LjQ5LTIwLjA0IDEwOS4wMi0yMS4xNCAxMDguNTQtMjIuMjQgMTA3LjgxLTIzLjA4IDEwNy4wOC0yMy45MyAxMDYuMDQtMjQuNDMgMTA1LTI0LjkzIDEwMy42My0yNC45M0wxMDMuNjMtMjQuOTNRMTAyLjIyLTI0LjkzIDEwMS4xOC0yNC40NCAxMDAuMTQtMjMuOTUgOTkuNC0yMy4xMSA5OC42NS0yMi4yNyA5OC4xOC0yMS4xOCA5Ny43LTIwLjA5IDk3LjQzLTE4LjkgOTcuMTYtMTcuNyA5Ny4wNS0xNi40OCA5Ni45NC0xNS4yNiA5Ni45NC0xNC4xNkw5Ni45NC0xNC4xNlE5Ni45NC0xMy4xOCA5Ny4wOS0xMiA5Ny4yNC0xMC44MiA5Ny41NS05LjYyIDk3Ljg3LTguNDIgOTguMzgtNy4zIDk4LjktNi4xOCA5OS42NC01LjMgMTAwLjM5LTQuNDIgMTAxLjM3LTMuODkgMTAyLjM2LTMuMzcgMTAzLjYzLTMuMzdMMTAzLjYzLTMuMzdRMTA1LjAyLTMuMzcgMTA2LjA1LTMuODcgMTA3LjA4LTQuMzcgMTA3LjgxLTUuMjEgMTA4LjU0LTYuMDUgMTA5LjAyLTcuMTUgMTA5LjQ5LTguMjUgMTA5Ljc2LTkuNDUgMTEwLjAzLTEwLjY0IDExMC4xNC0xMS44NyAxMTAuMjUtMTMuMDkgMTEwLjI1LTE0LjE2Wk0xNDguMTktOS4wMUwxNDguMTktOS4wMVExNDguMTktNy4xNSAxNDcuNjUtNS43MSAxNDcuMTEtNC4yNyAxNDYuMTgtMy4yMSAxNDUuMjYtMi4xNSAxNDMuOTktMS40MyAxNDIuNzItMC43MSAxNDEuMjYtMC4yNyAxMzkuODEgMC4xNyAxMzguMjIgMC4zNyAxMzYuNjQgMC41NiAxMzUuMDggMC41NkwxMzUuMDggMC41NlExMzIuOTggMC41NiAxMzEuMzYgMC4yOSAxMjkuNzUgMC4wMiAxMjguMjktMC41NyAxMjYuODItMS4xNyAxMjUuMzctMi4xMiAxMjMuOTItMy4wOCAxMjIuMTQtNC40NEwxMjIuMTQtNC40NCAxMjYuOTUtOC4zN1ExMjcuNi03LjEzIDEyOC42OS02LjEyIDEyOS43OC01LjEgMTMwLjk1LTQuMzcgMTMyLjEyLTMuNjQgMTMzLjIyLTMuMjUgMTM0LjMyLTIuODYgMTM1LTIuODZMMTM1LTIuODZRMTM1LjU2LTIuODYgMTM2LjI3LTIuODkgMTM2Ljk4LTIuOTMgMTM3LjcxLTMuMDQgMTM4LjQ0LTMuMTUgMTM5LjE1LTMuMzcgMTM5Ljg2LTMuNTkgMTQwLjQxLTMuOTcgMTQwLjk2LTQuMzUgMTQxLjI5LTQuOTIgMTQxLjYyLTUuNDkgMTQxLjYyLTYuM0wxNDEuNjItNi4zUTE0MS42Mi03LjEzIDE0MS4xOS03Ljc1IDE0MC43Ni04LjM3IDE0MC4wOC04Ljg0IDEzOS40LTkuMyAxMzguNTItOS42MiAxMzcuNjQtOS45NCAxMzYuNzUtMTAuMTggMTM1Ljg2LTEwLjQyIDEzNS4wMy0xMC42MSAxMzQuMi0xMC43OSAxMzMuNTktMTAuOTZMMTMzLjU5LTEwLjk2UTEzMi40Ni0xMS4yOCAxMzEuMjItMTEuNjEgMTI5Ljk3LTExLjk0IDEyOC43NS0xMi4zNyAxMjcuNTMtMTIuNzkgMTI2LjQyLTEzLjM4IDEyNS4zMS0xMy45NiAxMjQuNDctMTQuNzggMTIzLjYzLTE1LjYgMTIzLjEyLTE2LjcxIDEyMi42Mi0xNy44MiAxMjIuNjItMTkuMzFMMTIyLjYyLTE5LjMxUTEyMi42Mi0yMi4wNSAxMjMuNzEtMjMuODkgMTI0LjgtMjUuNzMgMTI2LjU4LTI2Ljg0IDEyOC4zNi0yNy45NSAxMzAuNjMtMjguNDIgMTMyLjktMjguODggMTM1LjI1LTI4Ljg4TDEzNS4yNS0yOC44OFExMzYuODYtMjguODggMTM4LjY0LTI4LjU1IDE0MC40Mi0yOC4yMiAxNDIuMTEtMjcuNTggMTQzLjc5LTI2LjkzIDE0NS4yNi0yNiAxNDYuNzItMjUuMDcgMTQ3LjctMjMuODhMMTQ3LjctMjMuODggMTQyLjg5LTE5LjkyUTE0Mi4zNS0yMS4zOSAxNDEuNDgtMjIuNDQgMTQwLjYyLTIzLjQ5IDEzOS42LTI0LjE2IDEzOC41OS0yNC44MyAxMzcuNTMtMjUuMTUgMTM2LjQ3LTI1LjQ2IDEzNS41Ni0yNS40NkwxMzUuNTYtMjUuNDZRMTM0LjY4LTI1LjQ2IDEzMy41OS0yNS4zOSAxMzIuNDktMjUuMzIgMTMxLjUyLTI0Ljk4IDEzMC41Ni0yNC42MyAxMjkuODktMjMuOTQgMTI5LjIyLTIzLjI0IDEyOS4yMi0yMi4wMkwxMjkuMjItMjIuMDJRMTI5LjIyLTIxLjE0IDEyOS42Mi0yMC41MiAxMzAuMDItMTkuOSAxMzAuNjgtMTkuNDUgMTMxLjM0LTE4Ljk5IDEzMi4xOC0xOC42OSAxMzMuMDItMTguMzggMTMzLjktMTguMTUgMTM0Ljc4LTE3LjkyIDEzNS42MS0xNy43NSAxMzYuNDQtMTcuNTggMTM3LjEtMTcuMzhMMTM3LjEtMTcuMzhRMTM4LjIyLTE3LjA3IDEzOS40OC0xNi43NCAxNDAuNzQtMTYuNDEgMTQxLjk2LTE1Ljk4IDE0My4xOC0xNS41NSAxNDQuMzItMTQuOTggMTQ1LjQ1LTE0LjQgMTQ2LjMxLTEzLjU3IDE0Ny4xNi0xMi43NCAxNDcuNjctMTEuNjMgMTQ4LjE5LTEwLjUyIDE0OC4xOS05LjAxWk0xNjIuMDUtMzUuMDFMMTYyLjA1LTM1LjAxUTE2Mi4wNS0zNC4wOCAxNjEuNy0zMy4yNSAxNjEuMzQtMzIuNDIgMTYwLjczLTMxLjgxIDE2MC4xMi0zMS4yIDE1OS4yOS0zMC44NSAxNTguNDYtMzAuNDkgMTU3LjUzLTMwLjQ5TDE1Ny41My0zMC40OVExNTYuNjEtMzAuNDkgMTU1Ljc5LTMwLjg1IDE1NC45Ny0zMS4yIDE1NC4zNi0zMS44MSAxNTMuNzUtMzIuNDIgMTUzLjQtMzMuMjUgMTUzLjA0LTM0LjA4IDE1My4wNC0zNS4wMUwxNTMuMDQtMzUuMDFRMTUzLjA0LTM1Ljk0IDE1My40LTM2Ljc2IDE1My43NS0zNy41NyAxNTQuMzYtMzguMTggMTU0Ljk3LTM4Ljc5IDE1NS43OS0zOS4xNSAxNTYuNjEtMzkuNSAxNTcuNTMtMzkuNUwxNTcuNTMtMzkuNVExNTguNDYtMzkuNSAxNTkuMjktMzkuMTUgMTYwLjEyLTM4Ljc5IDE2MC43My0zOC4xOCAxNjEuMzQtMzcuNTcgMTYxLjctMzYuNzYgMTYyLjA1LTM1Ljk0IDE2Mi4wNS0zNS4wMVpNMTYxLjY4LTI4LjE3TDE2MS42OCAwIDE1My40MSAwIDE1My40MS0yOC4xNyAxNjEuNjgtMjguMTdaIiBmaWxsPSIjZmZmZmZmIiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0icHJpbWFyeSIvPjwvZz48L3N2Zz48L2c+PC9zdmc+PC9nPjwvc3ZnPjwvZz48L3N2Zz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsMSwxMDcuNzM3NzE1MDQ5MzM5NjMsMCkiPjxzdmcgdmlld0JveD0iMCAwIDE4MC4wNDQ1Njk5MDEzMjA3MyAxODAuMzMwNTQ5NzkxNDExMDQiIGhlaWdodD0iMTgwLjMzMDU0OTc5MTQxMTA0IiB3aWR0aD0iMTgwLjA0NDU2OTkwMTMyMDczIj48Zz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgdmlld0JveD0iMC4xNzY0NjkzMTE1NjgxOTcxNyAwIDk5LjY0NjcyMjc1MzIyNDcgOTkuODA1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIiBoZWlnaHQ9IjE4MC4zMzA1NDk3OTE0MTEwNCIgd2lkdGg9IjE4MC4wNDQ1Njk5MDEzMjA3MyIgY2xhc3M9Imljb24taWNvbi0wIiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50IiBpZD0iaWNvbi0wIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNOTkuNjg5IDk3LjA4OUw4Ni4zIDYyLjQxMmMtMC4xOTgtMC41MTQtMC42MDEtMC45MjMtMS4xMS0xLjEzbC0xOS45MjYtOC4xMTNjLTAuNDUzLTAuMTg1LTAuOTU3LTAuMTk2LTEuNDE4LTAuMDM1bC0wLjcyOSAwLjI1N2M1LjkxNy05LjIxNiAxMi42NjMtMjEuNjY1IDEyLjY2My0zMC41NDhDNzUuNzc5IDEwLjI0NyA2NS41MTQgMCA1Mi44OTEgMGMtMTIuNjIyIDAtMjIuODkgMTAuMjQ3LTIyLjg5IDIyLjg0MiAwIDEwLjg4NCAxMC4yMDUgMjcuMTEzIDE2LjU4IDM2LjE5MmwtMTkuMzcyLTYuNTQ1Yy0wLjcyOS0wLjI0Ni0xLjU0MS0wLjA1Mi0yLjA3OCAwLjUwMkwwLjc0IDc4LjEyNWMtMC40MjkgMC40NDEtMC42MyAxLjA1Ny0wLjU0NCAxLjY2NCAwLjA4NSAwLjYwOSAwLjQ0NiAxLjE0NiAwLjk3OSAxLjQ1MmwzMS42OTMgMTguMjc2YzAuMDAxIDAgMC4wMDIgMCAwLjAwMyAwbDAuMDI4IDAuMDE4YzAuMDIxIDAuMDEyIDAuMDQ0IDAuMDE3IDAuMDY1IDAuMDI1IDAuMDg4IDAuMDQ3IDAuMTc1IDAuMDk0IDAuMjcxIDAuMTI5IDAuMDI1IDAuMDA5IDAuMDUyIDAuMDEyIDAuMDc3IDAuMDIgMC4wMzUgMC4wMTIgMC4wNyAwLjAyIDAuMTA2IDAuMDI3IDAuMTIxIDAuMDMxIDAuMjQyIDAuMDUgMC4zNjMgMC4wNTggMC4wMjQgMC4wMDEgMC4wNDkgMC4wMDYgMC4wNzMgMC4wMDYgMC4wMTUgMCAwLjAyOSAwLjAwNSAwLjA0NCAwLjAwNSAwLjA0IDAgMC4wNzgtMC4wMTcgMC4xMTgtMC4wMiAwLjEzNi0wLjAwOCAwLjI3LTAuMDI2IDAuNDAzLTAuMDYyIDAuMDY1LTAuMDE4IDAuMTI2LTAuMDQxIDAuMTg5LTAuMDY0IDAuMDU4LTAuMDIyIDAuMTE5LTAuMDMzIDAuMTc2LTAuMDYybDI3Ljc2Ny0xMy43MDFjMC4xODYgMC4wNjUgMC4zODEgMC4xMTMgMC41ODggMC4xMjEgMC4wMjYgMC4wMDIgMC4wNTMgMC4wMDIgMC4wNzcgMC4wMDIgMC4xNTYgMCAwLjMwOC0wLjAyMiAwLjQ1My0wLjA1OGwzMy4zOTIgMTMuNjkyYzAuMjQ0IDAuMTAyIDAuNTA0IDAuMTQ5IDAuNzYgMC4xNDkgMC41MTMgMCAxLjAxOC0wLjE5NiAxLjM5Ny0wLjU2OUM5OS43OTMgOTguNjc2IDk5Ljk3NyA5Ny44MzMgOTkuNjg5IDk3LjA4OXpNNDguMDk4IDQzLjE0YzAtMi43MTkgMi4yNS01LjAxNiA0LjkxOS01LjAxNiAyLjcyNiAwIDUuMDI2IDIuMjk3IDUuMDI2IDUuMDE2IDAgMi42NjQtMi4zMDIgNC45MTQtNS4wMjYgNC45MTRDNTAuMzQ4IDQ4LjA1NCA0OC4wOTggNDUuODA0IDQ4LjA5OCA0My4xNHpNNDMuMzgxIDE2LjM4N2MtMC40MTgtMC4zNjctMC4zNjYtMC45OTIgMC0xLjM1OCAwIDAgMy44NzctNC42IDEwLjYzMy00LjYgNS41NDcgMCAxMC42ODIgMy44NjggMTAuNjgyIDkuMTQ1IDAgNi44OTUtNy44NTQgNy4xMDQtNy44NTQgMTIuNzQ4IDAgMC41NzYtMC40NzMgMC45OTQtMC45OTcgMC45OTRoLTUuNjAyYy0wLjUyNSAwLTAuOTkzLTAuNDE3LTAuOTkzLTAuOTk0VjMwLjEzYzAtNC4zOTMgNy4yMjgtNi4zMjQgNy4yMjgtOS42NjcgMC0xLjYyMi0xLjY3OC0zLjA4NC0zLjkyOS0zLjA4NC0zLjY2NiAwLTQuNjYgMy4yOTQtNS45NyAyLjE0NEw0My4zODEgMTYuMzg3ek0zMi40NTMgODEuMjNjMS4zMDUgMC40ODIgMi42NjkgMC44MzggNC4wNTUgMS4wNTEgMC4wNTIgMC4wMDggMC4xMDMgMC4wMTIgMC4xNTMgMC4wMTIgMC4yNzIgMCAwLjUxOS0wLjExOCAwLjcwMi0wLjMwNGwtNC41NDggMTIuODg3TDUuMzk2IDc5LjA2NGwxMi4zNjEtMTIuNzM4YzAuMjg5IDAuNjQ2IDAuNjk0IDEuNDk0IDEuMjQgMi40OCAwLjE4MyAwLjMzIDAuNTIzIDAuNTE2IDAuODc2IDAuNTE2IDAuMTYzIDAgMC4zMjktMC4wNCAwLjQ4Mi0wLjEyNCAwLjQ4My0wLjI2NyAwLjY1OS0wLjg3NCAwLjM5Mi0xLjM1Ni0wLjc3MS0xLjM5NS0xLjI1My0yLjUwOS0xLjQ4LTMuMDdsNy44NTYtOC4wOTcgMTcuMTMgNS43ODgtNi42MTYgMTguNzQ4Yy0wLjAzOS0wLjQ0Ny0wLjM2LTAuODMxLTAuODI1LTAuOTAyLTEuMjUyLTAuMTkxLTIuNDg0LTAuNTEzLTMuNjY0LTAuOTQ5LTAuNTE1LTAuMTktMS4wOTMgMC4wNzItMS4yODUgMC41OUMzMS42NzEgODAuNDY1IDMxLjkzNSA4MS4wMzkgMzIuNDUzIDgxLjIzek02MS44MDMgNjguNjQxYy0wLjM3OCAwLjMyMS0wLjQ3OCAwLjg3My0wLjE5NSAxLjI5NyAwLjA0MSAwLjA2MiAwLjA5IDAuMTEzIDAuMTQxIDAuMTYybC0wLjQ1NiAxMS45NjUtMjMuODcgMTEuNzc5IDEwLjk2MS0zMS4wNTggMC43MTYtMC4yNTFjMS4zNjYgMS44NTIgMi4yODggMy4wMjUgMi40NTggMy4yNDIgMC4zNDQgMC40MzUgMC44NjkgMC42ODggMS40MjQgMC42ODhoMC4wMDRjMC41NTgtMC4wMDIgMS4wODItMC4yNTcgMS40MjUtMC42OTMgMC4yNjItMC4zMzQgMi4yOTktMi45NTEgNS4wMTMtNi44NTZsMi43OTEtMC45NzlMNjEuODAzIDY4LjY0MXpNNjUuMjg2IDgyLjMwN2wwLjUwOS0xMy4zNDFjMC4xNjItMC4wMzYgMC4zMjQtMC4wNzUgMC40ODgtMC4xMDYgMC41NDMtMC4xMDIgMC44OTgtMC42MjMgMC43OTctMS4xNjQtMC4xMDQtMC41NDMtMC42MjQtMC44OTUtMS4xNjgtMC43OTctMC4wMTQgMC4wMDItMC4wMjUgMC4wMDYtMC4wMzkgMC4wMWwwLjM0NS05LjA0IDE2LjY2IDYuNzg0TDk0LjI4NyA5NC4yIDY1LjI4NiA4Mi4zMDd6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTI0LjY0NCA3My4zN2MtMC4zNjgtMC40MS0xLTAuNDQ2LTEuNDEyLTAuMDgtMC40MTIgMC4zNjctMC40NDggMC45OTctMC4wOCAxLjQxIDAuOTQ1IDEuMDU2IDEuOTUyIDIuMDIyIDIuOTkyIDIuODc0IDAuMTg3IDAuMTUgMC40MSAwLjIyNiAwLjYzMyAwLjIyNiAwLjI5IDAgMC41NzctMC4xMjQgMC43NzQtMC4zNjQgMC4zNTEtMC40MjggMC4yODctMS4wNTctMC4xNC0xLjQwNEMyNi40NTEgNzUuMjQ0IDI1LjUyIDc0LjM1MiAyNC42NDQgNzMuMzd6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTQ2LjgzMSA3OC4wMzJjLTEuMjA5IDAuNTMyLTIuNDM0IDAuOTk3LTMuNjM4IDEuMzg1LTAuNTI1IDAuMTctMC44MTQgMC43MzEtMC42NDYgMS4yNTcgMC4xMzcgMC40MjQgMC41MjkgMC42OTEgMC45NTIgMC42OTEgMC4xMDIgMCAwLjIwNS0wLjAxNiAwLjMwNy0wLjA0OSAxLjI3LTAuNDA3IDIuNTU5LTAuODk4IDMuODMxLTEuNDU5IDAuNTA1LTAuMjIyIDAuNzM0LTAuODExIDAuNTEyLTEuMzE0QzQ3LjkyNyA3OC4wNCA0Ny4zMzggNzcuODA5IDQ2LjgzMSA3OC4wMzJ6IiBkYXRhLWZpbGwtcGFsZXR0ZS1jb2xvcj0iYWNjZW50Ii8+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTc3LjI0MiA2OC4zMTFjLTEuMzE2LTAuNTY5LTIuNjU2LTEuMDA2LTMuOTgyLTEuMjkzLTAuNTM1LTAuMTE3LTEuMDcgMC4yMjUtMS4xODkgMC43NjQtMC4xMTYgMC41MzcgMC4yMjcgMS4wNyAwLjc2NyAxLjE4OCAxLjE5OCAwLjI2IDIuNDEyIDAuNjU0IDMuNjA4IDEuMTc0IDAuMTMxIDAuMDU3IDAuMjY2IDAuMDgyIDAuMzk3IDAuMDgyIDAuMzg4IDAgMC43NTUtMC4yMjUgMC45MTgtMC42MDFDNzcuOTggNjkuMTE3IDc3Ljc0OCA2OC41MjkgNzcuMjQyIDY4LjMxMXoiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNNTYuMTY0IDcyLjYyN2MtMS4xODQgMC44MjYtMi4yNTggMS41MzktMy4yODggMi4xOC0wLjQ2OSAwLjI5MS0wLjYxIDAuOTA3LTAuMzE5IDEuMzc1IDAuMTg5IDAuMzAzIDAuNTE3IDAuNDcxIDAuODUxIDAuNDcxIDAuMTgxIDAgMC4zNjItMC4wNDkgMC41MjgtMC4xNTEgMS4wNi0wLjY2IDIuMTY0LTEuMzk0IDMuMzc1LTIuMjM3IDAuNDUzLTAuMzE1IDAuNTYyLTAuOTM4IDAuMjQ2LTEuMzkxQzU3LjI0IDcyLjQyIDU2LjYxNyA3Mi4zMTEgNTYuMTY0IDcyLjYyN3oiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNODIuMDIgNzIuMjI3Yy0wLjM0IDAuNDM1LTAuMjY1IDEuMDYxIDAuMTcyIDEuNCAwLjk3NyAwLjc2NCAxLjk2MSAxLjYyMiAyLjkyOCAyLjU1OSAwLjE5MyAwLjE4NyAwLjQ0MyAwLjI3OSAwLjY5NSAwLjI3OSAwLjI2MSAwIDAuNTIxLTAuMTAyIDAuNzE5LTAuMzA0IDAuMzg0LTAuMzk2IDAuMzc0LTEuMDI3LTAuMDIzLTEuNDExLTEuMDE2LTAuOTgtMi4wNTQtMS44ODktMy4wODYtMi42OTNDODIuOTg4IDcxLjcxNiA4Mi4zNTkgNzEuNzkyIDgyLjAyIDcyLjIyN3oiIGRhdGEtZmlsbC1wYWxldHRlLWNvbG9yPSJhY2NlbnQiLz48L3N2Zz48L2c+PC9zdmc+PC9nPjxnLz48L3N2Zz48L2c+PGRlZnMvPjwvc3ZnPg=="
+        alt="Logo"
+        class="logo"
+      />
+
+      <ul class="workouts">
+        <form class="form hidden">
+          <div class="form__row">
+            <label class="form__label">Type</label>
+            <select class="form__input form__input--type">
+              <option value="running">Running</option>
+              <option value="cycling">Cycling</option>
+            </select>
+          </div>
+          <div class="form__row">
+            <label class="form__label">Distance</label>
+            <input class="form__input form__input--distance" placeholder="km" />
+          </div>
+          <div class="form__row">
+            <label class="form__label">Duration</label>
+            <input
+              class="form__input form__input--duration"
+              placeholder="min"
+            />
+          </div>
+          <div class="form__row">
+            <label class="form__label">Cadence</label>
+            <input
+              class="form__input form__input--cadence"
+              placeholder="step/min"
+            />
+          </div>
+          <div class="form__row form__row--hidden">
+            <label class="form__label">Elev Gain</label>
+            <input
+              class="form__input form__input--elevation"
+              placeholder="meters"
+            />
+          </div>
+          <button class="form__btn">OK</button>
+        </form>
+        <div class="btn">Reset all</div>
+
+        <!-- <li class="workout workout--running" data-id="1234567890">
+          <h2 class="workout__title">Running on April 14</h2>
+          <div class="workout__details">
+            <span class="workout__icon">🏃‍♂️</span>
+            <span class="workout__value">5.2</span>
+            <span class="workout__unit">km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⏱</span>
+            <span class="workout__value">24</span>
+            <span class="workout__unit">min</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">4.6</span>
+            <span class="workout__unit">min/km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">🦶🏼</span>
+            <span class="workout__value">178</span>
+            <span class="workout__unit">spm</span>
+          </div>
+        </li>
+
+        <li class="workout workout--cycling" data-id="1234567891">
+          <h2 class="workout__title">Cycling on April 5</h2>
+          <div class="workout__details">
+            <span class="workout__icon">🚴‍♀️</span>
+            <span class="workout__value">27</span>
+            <span class="workout__unit">km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⏱</span>
+            <span class="workout__value">95</span>
+            <span class="workout__unit">min</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">16</span>
+            <span class="workout__unit">km/h</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⛰</span>
+            <span class="workout__value">223</span>
+            <span class="workout__unit">m</span>
+          </div>
+        </li> -->
+      </ul>
+
+      <p class="copyright">
+        &copy; App Developer
+        <a
+          class="Linkidin-link"
+          target="_blank"
+          href="https://www.linkedin.com/in/alex-boziyev-rakovskyy-55b371292/"
+        >
+          Alex Boziyev-Rakovskyy
+        </a>
+      </p>
+    </div>
+
+    <div id="map"></div>
+    <script defer>
+      "use strict";
+
+      // prettier-ignore
+
+      class Workout{
+          date = new Date();
+          id = (Date.now() + '').slice(-10);
+          clicks = 0;
+          constructor(coords,distance,duration){
+              this.coords = coords;
+              this.distance = distance; // km
+              this.duration = duration; 
+              
+          }
+          _setDescription(){
+              const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+          this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${months[this.date.getMonth()]}${this.date.getDate()}`
+          }
+          click(){
+          this.clicks++;
+         }
+      }
+      class Running extends Workout {
+        type = "running";
+        constructor(coords, distance, duration, cadence) {
+          super(coords, distance, duration);
+          this.cadence = cadence;
+          this.calcPace();
+          this._setDescription();
+        }
+        calcPace() {
+          this.pace = this.duration / this.distance;
+          return this.pace;
+        }
+      }
+      class Cycling extends Workout {
+        type = "cycling";
+
+        constructor(coords, distance, duration, elevationGain) {
+          super(coords, distance, duration);
+          this.elevationGain = elevationGain;
+
+          this.calcSpeed();
+          this._setDescription();
+        }
+        calcSpeed() {
+          this.speed = this.distance / (this.duration / 60);
+        }
+      }
+      const form = document.querySelector(".form");
+      const containerWorkouts = document.querySelector(".workouts");
+      const inputType = document.querySelector(".form__input--type");
+      const inputDistance = document.querySelector(".form__input--distance");
+      const inputDuration = document.querySelector(".form__input--duration");
+      const inputCadence = document.querySelector(".form__input--cadence");
+      const inputElevation = document.querySelector(".form__input--elevation");
+      const btnResetAll = document.querySelector(".btn");
+      class App {
+        #map;
+        #mapEvent;
+        #mapZoomLevel = 13;
+        #workouts = [];
+        constructor() {
+          this._getPosition();
+          this._getLocalStorage();
+          form.addEventListener("submit", this._newWorkout.bind(this));
+          inputType.addEventListener("change", this._toggleElevationField);
+          containerWorkouts.addEventListener(
+            "click",
+            this._moveToPopup.bind(this)
+          );
+        }
+        _getPosition() {
+          if (navigator.geolocation)
+            navigator.geolocation.getCurrentPosition(
+              this._loadMap.bind(this),
+              function () {
+                alert("Could not get you position!");
+              }
+            );
+        }
+        _loadMap(position) {
+          const { latitude } = position.coords;
+          const { longitude } = position.coords;
+          console.log(`https://www.google.com/maps/@{latitude},{longitude}`);
+          const coords = [latitude, longitude];
+          this.#map = L.map("map").setView(coords, this.#mapZoomLevel);
+
+          L.tileLayer("https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }).addTo(this.#map);
+
+          this.#map.on("click", this._showForm.bind(this));
+          this.#workouts.forEach((work) => {
+            this._renderWorkoutMarker(work);
+          });
+        }
+        _showForm(mapE) {
+          this.#mapEvent = mapE;
+          form.classList.remove("hidden");
+          inputDistance.focus();
+        }
+        _hideForm() {
+          inputDistance.value =
+            inputDuration.value =
+            inputCadence.value =
+            inputElevation.value =
+              "";
+          form.style.display = "none";
+          form.classList.add("hidden");
+          setTimeout(() => (form.style.display = "grid"), 1000);
+        }
+        _toggleElevationField() {
+          inputElevation
+            .closest(".form__row")
+            .classList.toggle("form__row--hidden");
+          inputCadence
+            .closest(".form__row")
+            .classList.toggle("form__row--hidden");
+        }
+        _newWorkout(e) {
+          const validInputs = (...inputs) => {
+            return inputs.every((inp) => Number.isFinite(inp));
+          };
+          const allPositive = (...inputs) => {
+            return inputs.every((inp) => inp > 0);
+          };
+          e.preventDefault();
+
+          const type = inputType.value;
+          const distance = +inputDistance.value;
+          const duration = +inputDuration.value;
+          const { lat, lng } = this.#mapEvent.latlng;
+          let workout;
+          if (type === "running") {
+            const cadence = +inputCadence.value;
+
+            // Check if data is valid
+            if (
+              !validInputs(distance, duration, cadence) ||
+              !allPositive(distance, duration, cadence)
+            )
+              return alert("Must be positive numbers, fella!");
+            workout = new Running([lat, lng], distance, duration, cadence);
+          }
+
+          // If workout cycling, create cycling object
+          if (type === "cycling") {
+            const elevation = +inputElevation.value;
+
+            if (
+              !validInputs(distance, duration, elevation) ||
+              !allPositive(distance, duration)
+            )
+              return alert("Must be positive numbers, fella!");
+            workout = new Cycling([lat, lng], distance, duration, elevation);
+          }
+          this.#workouts.push(workout);
+          console.log(workout);
+          this._renderWorkoutMarker(workout);
+          this._renderWorkout(workout);
+          this._hideForm();
+          this._setLocalStorage();
+        }
+        _renderWorkoutMarker(workout) {
+          L.marker(workout.coords)
+            .addTo(this.#map)
+            .bindPopup(
+              L.popup({
+                maxWidth: 250,
+                minWidth: 100,
+                autoClose: false,
+                closeClick: false,
+                className: `${workout.type}-popup`,
+              })
+            )
+
+            .setPopupContent(
+              `${workout.type === "running" ? "🏃‍♂️" : "🚴‍♀️"} ${
+                workout.description
+              }`
+            )
+            .openPopup();
+        }
+        _renderWorkout(workout) {
+          let html = `
+          <li class="workout workout--${workout.type}" data-id="${workout.id}">
+          <h2 class="workout__title">${workout.description}</h2>
+          <div class="workout__details">
+            <span class="workout__icon">${
+              workout.type === "running" ? "🏃‍♂️" : "🚴‍♀️"
+            }</span>
+            <span class="workout__value">${workout.distance}</span>
+            <span class="workout__unit">km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⏱</span>
+            <span class="workout__value">${workout.duration}</span>
+            <span class="workout__unit">min</span>
+          </div>
+          `;
+          if (workout.type === "running")
+            html += `          
+            <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">${workout.pace.toFixed(1)}</span>
+            <span class="workout__unit">min/km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">🦶🏼</span>
+            <span class="workout__value">${workout.cadence}</span>
+            <span class="workout__unit">spm</span>
+          </div>
+      `;
+          if (workout.type === "cycling")
+            html += `
+            <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">${workout.speed.toFixed(1)}</span>
+            <span class="workout__unit">km/h</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">⛰</span>
+            <span class="workout__value">${workout.elevationGain}</span>
+            <span class="workout__unit">m</span>
+          </div>
+        </li>
+        `;
+          form.insertAdjacentHTML("afterend", html);
+        }
+        _moveToPopup(e) {
+          const workoutEl = e.target.closest(".workout");
+          if (!workoutEl) return;
+          const workout = this.#workouts.find(
+            (work) => work.id === workoutEl.dataset.id
+          );
+          this.#map.setView(workout.coords, this.#mapZoomLevel, {
+            animate: true,
+            pan: {
+              duration: 1,
+            },
+          });
+          //workout.click();
+        }
+        _setLocalStorage() {
+          localStorage.setItem("workouts", JSON.stringify(this.#workouts));
+        }
+        _getLocalStorage() {
+          const data = JSON.parse(localStorage.getItem("workouts"));
+          if (!data) return;
+          this.#workouts = data;
+          this.#workouts.forEach((work) => {
+            this._renderWorkout(work);
+          });
+          btnResetAll.addEventListener("click", function () {
+            localStorage.removeItem("workouts");
+            location.reload();
+          });
+        }
+      }
+      const app = new App();
+    </script>
+  </body>
+</html>
